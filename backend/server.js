@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.route.js";
+import taskRoutes from "./routes/task.route.js";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
@@ -14,6 +15,7 @@ app.use(express.json());// so that req.body is not undefined
 app.use(cors());
 app.use(cookieParser());// to parse cookies from requests
 app.use("/api/auth", authRoutes);
+app.use("/api/tasks",taskRoutes);
 
 const startServer = async () => {
   try {
