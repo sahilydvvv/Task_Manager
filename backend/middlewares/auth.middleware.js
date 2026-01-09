@@ -4,13 +4,13 @@ import User from '../models/User.js';
 export const authenticateToken = async (req, res, next) => {
   try {
     const token = req.cookies.token;
+    console.log("Cookies received:", req.cookies);
 
     if (!token) {
       return res.status(401).json({ message: "Access Denied. No token provided." });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // decoded = { id, iat, exp }
 
     const user = await User.findById(decoded.id).select('-password');
 

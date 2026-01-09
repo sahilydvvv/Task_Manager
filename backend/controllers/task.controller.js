@@ -2,12 +2,12 @@ import Task from '../models/Task.js';
 import mongoose from 'mongoose';
 
 
-export const createTask = async (req,res)=>{
-    const {title, description, dueDate, priority} = req.body;
-    const userId = req.user._id; //authenticateToken middleware adds user info to req
+export const createTask = async (req, res) => {
+    const { title, description, dueDate, priority } = req.body;
+    const userId = req.user._id;
 
-    if(!title){
-        return res.status(400).json({message: "Title is required"});
+    if (!title) {
+        return res.status(400).json({ message: "Title is required" });
     }
 
     try {
@@ -32,54 +32,57 @@ export const createTask = async (req,res)=>{
             }
         });
     } catch (error) {
-        res.status(500).json({message: "Error creating task", error});
+        res.status(500).json({ message: "Error creating task", error });
     }
 }
 
 export const getTasks = async (req, res) => {
-  try {
-    const userId = req.user._id;
+    try {
+        const userId = req.user._id;
 
-    const query = { userId };
-    const { status, priority } = req.query;
+        const query = { userId };
+        const { status, priority, search } = req.query;
 
-    if (status) query.status = status;
-    if (priority) query.priority = priority;
+        if (status) query.status = status;
+        if (priority) query.priority = priority;
 
-    const tasks = await Task.find(query).sort({ createdAt: -1 });
+        if (search) {
+            query.title = { $regex: search, $options: "i" };
+        }
 
-    res.status(200).json({ tasks });
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-    res.status(500).json({ message: "Error fetching tasks"});
-  }
+        const tasks = await Task.find(query).sort({ createdAt: -1 });
+
+        res.status(200).json({ tasks });
+    } catch (error) {
+        console.error("Error fetching tasks:", error);
+        res.status(500).json({ message: "Error fetching tasks" });
+    }
 };
 
 
-export const updateTask = async (req,res)=>{
+
+export const updateTask = async (req, res) => {
     try {
         const userId = req.user._id;
-        const {taskId} = req.params;
+        const { taskId } = req.params;
 
-        // Validate ObjectId format
         if (!mongoose.Types.ObjectId.isValid(taskId)) {
             return res.status(400).json({ message: "Invalid task ID" });
         }
 
-        // Find the task by ID and userId
-        const task = await Task.findOne({_id:taskId, userId});
-        if(!task){
-            return res.status(404).json({message: "Task not found"});
+        const task = await Task.findOne({ _id: taskId, userId });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
         }
-        // Update task fields
-        const {title, description, dueDate, priority, status} = req.body;
+        const { title, description, dueDate, priority, status } = req.body;
         if (title !== undefined) task.title = title;
         if (description !== undefined) task.description = description;
         if (dueDate !== undefined) task.dueDate = dueDate;
         if (priority !== undefined) task.priority = priority;
         if (status !== undefined) task.status = status;
         await task.save();
-        res.status(200).json({message: "Task updated successfully", task: {
+        res.status(200).json({
+            message: "Task updated successfully", task: {
                 id: task._id,
                 title: task.title,
                 description: task.description,
@@ -87,52 +90,40 @@ export const updateTask = async (req,res)=>{
                 status: task.status,
                 dueDate: task.dueDate,
                 createdAt: task.createdAt,
-            }});
+            }
+        });
     } catch (error) {
         console.error("Error updating task:", error);
-        res.status(500).json({message: "Error updating task", error});
-        
+        res.status(500).json({ message: "Error updating task", error });
+
     }
 
 }
 
-export const deleteTask = async (req,res)=>{
+export const deleteTask = async (req, res) => {
     const userId = req.user._id;
-    const {taskId} = req.params;
+    const { taskId } = req.params;
     try {
         if (!mongoose.Types.ObjectId.isValid(taskId)) {
             return res.status(400).json({ message: "Invalid task ID" });
         }
-        // const task = await Task.findOne({_id:taskId, userId});
-        // if(!task){
-        //     return res.status(404).json({message: "Task not found"});
-        // }
-        // await Task.deleteOne({_id:taskId, userId});
-        const deletedTask = await Task.findOneAndDelete({_id:taskId, userId});
-        if(!deletedTask){
-            return res.status(404).json({message: "Task not found"});
+        const deletedTask = await Task.findOneAndDelete({ _id: taskId, userId });
+        if (!deletedTask) {
+            return res.status(404).json({ message: "Task not found" });
         }
-        res.status(200).json({message: "Task deleted successfully"});
+        res.status(200).json({ message: "Task deleted successfully" });
     } catch (error) {
         console.error("Error deleting task:", error);
-        res.status(500).json({message: "Error deleting task"});
+        res.status(500).json({ message: "Error deleting task" });
     }
 }
 
-export const getTaskAnalytics = async (req,res)=>{
+export const getTaskAnalytics = async (req, res) => {
     try {
         const userId = req.user._id;
         const tasks = await Task.find({ userId });
 
         const totalTasks = tasks.length;
-        // const completedTasks = await Task.find({ userId, status: 'completed' }).countDocuments();
-        // const pendingTasks = await Task.find({ userId, status: 'pending' }).countDocuments();
-        // const inProgressTasks = await Task.find({ userId, status: 'in-progress' }).countDocuments();
-        // const notcompletedTasks = totalTasks - completedTasks;
-
-        // const highPriorityTasks = await Task.find({ userId, priority: 'high' }).countDocuments();
-        // const mediumPriorityTasks = await Task.find({ userId, priority: 'medium' }).countDocuments();
-        // const lowPriorityTasks = await Task.find({ userId, priority: 'low' }).countDocuments();
 
         const completedTasks = tasks.filter(task => task.status === 'completed').length;
         const pendingTasks = tasks.filter(task => task.status === 'pending').length;
@@ -145,7 +136,7 @@ export const getTaskAnalytics = async (req,res)=>{
 
 
         let percentageCompleted = 0;
-        if(totalTasks > 0){
+        if (totalTasks > 0) {
             percentageCompleted = (completedTasks / totalTasks) * 100;
             percentageCompleted = Math.round(percentageCompleted);
         }
@@ -156,7 +147,7 @@ export const getTaskAnalytics = async (req,res)=>{
         start.setHours(0, 0, 0, 0);
 
         const end = new Date(now);
-        end.setHours(23, 59, 59, 999);  
+        end.setHours(23, 59, 59, 999);
 
         const tasksDueToday = tasks.filter(task =>
             task.dueDate &&
@@ -186,6 +177,6 @@ export const getTaskAnalytics = async (req,res)=>{
         });
     } catch (error) {
         console.error("Error fetching task analytics:", error);
-        res.status(500).json({message: "Error fetching task analytics"});        
+        res.status(500).json({ message: "Error fetching task analytics" });
     }
 }

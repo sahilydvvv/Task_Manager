@@ -9,13 +9,16 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());// so that req.body is not undefined
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'], // frontend origins
+  credentials: true, // allow cookies to be sent or accept from frontend
+}));
 app.use(cookieParser());// to parse cookies from requests
 app.use("/api/auth", authRoutes);
-app.use("/api/tasks",taskRoutes);
+app.use("/api/tasks", taskRoutes);
 
 const startServer = async () => {
   try {
