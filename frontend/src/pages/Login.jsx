@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api.js";
+import { FiCheckSquare } from "react-icons/fi";
+import { CiMail } from "react-icons/ci";
+import { FaLock } from "react-icons/fa";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -25,49 +28,84 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-md w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden relative">
+        <div className="h-24 bg-blue-600 w-full absolute top-0 left-0 z-0"></div>
 
-        {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-        )}
+        <div className="relative z-10 px-8 pb-8 pt-12">
+          <div className="flex justify-center mb-6">
+            <div className="bg-white p-3 rounded-xl shadow-md">
+              <FiCheckSquare className="text-blue-600 text-4xl" />
+            </div>
+          </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border rounded-md px-3 py-2 mb-4"
-          required
-        />
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+            Welcome Back
+          </h2>
+          <h4 className="text-gray-500 text-center mb-8 font-medium">
+            Sign in to your Smart Task Manager
+          </h4>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border rounded-md px-3 py-2 mb-6"
-          required
-        />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 text-red-500 text-sm py-2 px-4 rounded-lg text-center border border-red-100">
+                {error}
+              </div>
+            )}
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-        >
-          Login
-        </button>
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-gray-700 ml-1">
+                Email Address
+              </label>
+              <div className="relative">
+                <CiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none" />
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-400"
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-gray-700 ml-1">
+                Password
+              </label>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none" />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-400"
+                  required
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+            >
+              Sign In
+            </button>
+          </form>
 
-        <p className="text-sm text-center mt-4 text-gray-600">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-        </p>
-      </form>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-500 mb-3">
+              New to Smart Task Manager?
+            </p>
+            <Link
+              to="/register"
+              className="inline-block w-full py-2.5 px-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors duration-200"
+            >
+              Create an account
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
