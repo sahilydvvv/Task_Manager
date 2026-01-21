@@ -39,7 +39,7 @@ const TaskList = ({ tasks, onDelete, onUpdate }) => {
           key={task._id}
           className={`group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 relative overflow-hidden flex flex-col`}
         >
-          <div className={`absolute left-0 top-0 bottom-0 w-1 ${getPriorityColor(task.priority).split(" ")[1]}`}></div>
+          <div className={`absolute left-0 top-0 bottom-0 w-1 ${getPriorityColor(task.priority)}`}></div>
 
           <div className="p-5 flex flex-col h-full">
             <div className="flex justify-between items-start mb-2 pl-2">

@@ -23,7 +23,7 @@ export default function Register() {
       await api.post("/auth/signup", { email, password, userName });
       await refreshAuth();
       navigate("/dashboard");
-    } catch (err) {
+    } catch (_err) {
       setError("Registration failed. Try a different email.");
     }
   };

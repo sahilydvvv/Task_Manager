@@ -22,7 +22,7 @@ function Login() {
       await api.post("/auth/login", { email, password });
       await refreshAuth();
       navigate("/dashboard");
-    } catch (err) {
+    } catch (_err) {
       setError("Invalid email or password");
     }
   };
