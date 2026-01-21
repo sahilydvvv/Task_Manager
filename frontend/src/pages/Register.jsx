@@ -7,9 +7,6 @@ import { CiMail } from "react-icons/ci";
 import { FaLock } from "react-icons/fa";
 import axios from 'axios'
 
-const BACKEND_URL = import.meta.env.VITE_BASE_URL
-
-console.log(BACKEND_URL)
 
 export default function Register() {
   const [userName, setUserName] = useState("");
@@ -25,7 +22,7 @@ export default function Register() {
     setError("");
 
     try {
-      await api.post(`${BACKEND_URL}/auth/signup`, { email, password, userName });
+      await api.post("/auth/signup", { email, password, userName });
       await refreshAuth();
       navigate("/dashboard");
     } catch (_err) {
