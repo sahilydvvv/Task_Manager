@@ -19,10 +19,12 @@ function Login() {
     setError("");
 
     try {
-      await api.post("/auth/login", { email, password });
+      const res = await api.post("/auth/login", { email, password });
+      console.log(res)
       await refreshAuth();
       navigate("/dashboard");
     } catch (_err) {
+      console.log(_err)
       setError("Invalid email or password");
     }
   };
