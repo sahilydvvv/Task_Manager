@@ -9,6 +9,8 @@ import axios from 'axios'
 
 const BACKEND_URL = import.meta.env.VITE_BASE_URL
 
+console.log(BACKEND_URL)
+
 export default function Register() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
