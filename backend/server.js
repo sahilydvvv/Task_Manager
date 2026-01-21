@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());// so that req.body is not undefined
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'], // frontend origins
+  origin: process.env.FRONTEND_URL, // frontend origins
   credentials: true, // allow cookies to be sent or accept from frontend
 }));
 app.use(cookieParser());// to parse cookies from requests
